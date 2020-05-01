@@ -1,10 +1,11 @@
 {
-  "name": "pack_it",
+  "name": "pack it",
   "description": "A tool that allow user to clip images from any webpage into a database",
   "options_ui": {
     "page": "options.html",
     "chrome_style": true
   },
+  "permissions": ["storage", "activeTab", "cookies", "*://*.techpacker.io"],
   "background": {
     "page": "background.html"
   },
