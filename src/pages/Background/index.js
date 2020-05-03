@@ -5,31 +5,53 @@ import '../../assets/img/logo128.png';
 console.log('This is the background page.');
 console.log('Put the background scripts here.');
 
-chrome.runtime.onInstalled.addListener(function () {
-  chrome.storage.sync.set({ color: '#3aa757' }, function () {
-    console.log('The color is green.');
+//get user info from the chrome.cookies
+//this info will persist for all pages
+
+const getUserCookie = () => {
+  return new Promise((resolve, reject) => {
+    const cookieDetails = {
+      url: 'https://angora.techpacker.io',
+      name: 'user',
+    };
+    chrome.cookies.get(cookieDetails, (cookie) => {
+      // chrome.cookies.get takes callback as 2nd parameter
+      // when callback returns we resolve
+      resolve(cookie);
+    });
   });
-});
-
-console.log('chrome.storage', chrome.storage);
-console.log('session', document.cookie);
-
-var getCookie = function (cname) {
-  console.log('running');
-  console.log('document.cookie', document.cookie);
-  var name = cname + '=';
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return '';
 };
 
-console.log('cookie', getCookie('user'));
+const getUserInfo = async () => {
+  let userInfo;
+  // getUserCookie returns a Promise
+  // so using await to wait for it to return
+  const userCookie = await getUserCookie();
+  if (userCookie) {
+    // decode cookie value using decodeURIComponent
+    userInfo = decodeURIComponent(userCookie.value);
+    // user info returns string, need to parse into json
+    userInfo = JSON.parse(userInfo);
+  } else {
+    console.log('Check if you are logged in');
+  }
+  return userInfo;
+};
+
+// get userId and userEmail
+
+getUserInfo().then((userInfo) => {
+  let userId = userInfo.id;
+  let userEmail = userInfo.email;
+  console.log('id', userId);
+  console.log('email', userEmail);
+
+  //send user id and email to pop for
+  chrome.runtime.sendMessage({
+    msg: 'user info',
+    data: {
+      userId,
+      userEmail,
+    },
+  });
+});

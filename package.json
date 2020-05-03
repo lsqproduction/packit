@@ -16,7 +16,9 @@
     "@hot-loader/react-dom": "^16.13.0",
     "@types/chrome": "0.0.104",
     "@types/react": "^16.9.26",
+    "bootstrap": "^4.4.1",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.20"
   },

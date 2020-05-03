@@ -5,7 +5,7 @@
     "page": "options.html",
     "chrome_style": true
   },
-  "permissions": ["storage", "activeTab", "cookies", "*://*.techpacker.io"],
+  "permissions": ["storage", "activeTab", "cookies", "*://*.techpacker.io/"],
   "background": {
     "page": "background.html"
   },

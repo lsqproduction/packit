@@ -1,6 +1,8 @@
 import React from 'react';
 import logo from '../../assets/img/logo128.png';
 import Greetings from '../../containers/Greetings/Greetings';
+import Login from '../../containers/Login';
+import Card from '../../containers/Card';
 import './Popup.css';
 
 const Popup = () => {
@@ -10,8 +12,11 @@ const Popup = () => {
         <img src={logo} className="App-logo" alt="logo" />
         <p>Welcome to Techpacker!</p>
         <Greetings />
-        <button className="button">SIGN IN</button>
-        <button className="button_signup">SIGN UP</button>
+        <Card />
+
+        {/* <Login /> */}
+        {/* <button className="button">SIGN IN</button>
+        <button className="button_signup">SIGN UP</button> */}
       </header>
     </div>
   );
