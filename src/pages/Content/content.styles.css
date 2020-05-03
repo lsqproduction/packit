@@ -1,4 +1,10 @@
 .crx_mouse_visited {
-  background-color: #bcd5eb !important;
-  outline: 1px solid #5166bb !important;
+  opacity: 1;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+}
+
+.crx_mouse_visited:hover {
+  opacity: 0.5;
+  outline: 5px solid #0dd5b2 !important;
 }
