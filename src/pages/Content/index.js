@@ -36,8 +36,12 @@ document.addEventListener(
       // Add a visited class name to the element. So we can style it.
       srcTarget.classList.add(MOUSE_VISITED_CLASSNAME);
       console.log(srcTarget);
+      console.log(srcTarget.src);
       //send srcTarget to popup.js
-
+      chrome.runtime.sendMessage({ message: 'hi' }, (response) => {
+        console.log('content is sending message');
+        console.log(response.message);
+      });
       // The current element is now the previous. So we can remove the class
       // during the next ieration.
       prevDOM = srcTarget;

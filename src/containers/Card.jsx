@@ -30,7 +30,10 @@ export default class Card extends React.Component {
     };
 
     console.log(payload);
-
+    //need to make request for image to imageMagic for processing
+    //save the big file and optimize file
+    //process image in s3
+    //
     try {
       let data = await axios.post(
         'https://angora.techpacker.io/api/favorite/createCard ',
@@ -54,16 +57,10 @@ export default class Card extends React.Component {
     //this.setState({imageUrl})
     console.log('mounted');
     console.log(this.state);
-    // chrome.runtime.onMessage.addListener(function (
-    //   request,
-    //   sender,
-    //   sendResponse
-    // ) {
-    //   console.log('Card.js got a message');
-    //   console.log(request);
-    //   console.log(sender);
-    //   sendResponse('bar');
-    // });
+
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.message === 'hi') sendResponse({ message: 'hi to you' });
+    });
   }
 
   render() {
