@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 
 class GreetingComponent extends Component {
-  state = {
-    name: 'dev',
-  };
+  componentDidMount() {
+    console.log(sessionStorage);
+  }
 
   render() {
     return (
       <div>
-        <p>Hello, {this.state.name}!</p>
+        <p>Hello, {localStorage.fullName}!</p>
       </div>
     );
   }

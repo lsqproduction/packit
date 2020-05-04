@@ -36,6 +36,7 @@ document.addEventListener(
       // Add a visited class name to the element. So we can style it.
       srcTarget.classList.add(MOUSE_VISITED_CLASSNAME);
       console.log(srcTarget);
+      //send srcTarget to popup.js
 
       // The current element is now the previous. So we can remove the class
       // during the next ieration.

@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 //import fetchAddedCard
 
 export default class Card extends React.Component {
@@ -8,6 +9,7 @@ export default class Card extends React.Component {
       imageUrl: '',
       title: '',
       description: '',
+      favorite: '',
       collection: 'Sketch',
     };
     this.handleChange = this.handleChange.bind(this);
@@ -22,20 +24,46 @@ export default class Card extends React.Component {
   async handleSubmit(evt) {
     evt.preventDefault();
     console.log('this.state', this.state);
+    let payload = {
+      pack: { ...this.state, favorite: `${localStorage.userId}` },
+      timeStamp: Date.now(),
+    };
+
+    console.log(payload);
+
     try {
-      // make axio request with this.state
-      //send local state to background
-      // this.setState({
-      //   imageUrl: '',
-      //   title: '',
-      //   description: '',
-      //   collection: '1',
-      // });
-    } catch (err) {
-      this.setState({
-        errorMessage: `There was a problem saving the card: ${err.message} `,
-      });
+      let data = await axios.post(
+        'https://angora.techpacker.io/api/favorite/createCard ',
+        payload
+      );
+      console.log('data', data);
+    } catch (error) {
+      console.error(error);
     }
+
+    this.setState({
+      imageUrl: '',
+      title: '',
+      description: '',
+      favorite: '',
+    });
+  }
+
+  componentDidMount() {
+    //listen for messages from content - image url
+    //this.setState({imageUrl})
+    console.log('mounted');
+    console.log(this.state);
+    // chrome.runtime.onMessage.addListener(function (
+    //   request,
+    //   sender,
+    //   sendResponse
+    // ) {
+    //   console.log('Card.js got a message');
+    //   console.log(request);
+    //   console.log(sender);
+    //   sendResponse('bar');
+    // });
   }
 
   render() {

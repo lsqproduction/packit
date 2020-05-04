@@ -42,16 +42,10 @@ const getUserInfo = async () => {
 
 getUserInfo().then((userInfo) => {
   let userId = userInfo.id;
-  let userEmail = userInfo.email;
-  console.log('id', userId);
-  console.log('email', userEmail);
 
-  //send user id and email to pop for
-  chrome.runtime.sendMessage({
-    msg: 'user info',
-    data: {
-      userId,
-      userEmail,
-    },
-  });
+  let fullName = userInfo.fullName;
+
+  window.localStorage.setItem('userId', userId);
+
+  window.localStorage.setItem('fullName', fullName);
 });
