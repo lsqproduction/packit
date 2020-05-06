@@ -1,6 +1,8 @@
 import '../../assets/img/logo16.png';
 import '../../assets/img/logo48.png';
 import '../../assets/img/logo128.png';
+import chromeService from "../../services/chromeService";
+
 
 console.log('This is the background page.');
 console.log('Put the background scripts here.');
@@ -48,4 +50,50 @@ getUserInfo().then((userInfo) => {
   window.localStorage.setItem('userId', userId);
 
   window.localStorage.setItem('fullName', fullName);
+});
+
+
+/**
+ * Main extension functionality
+ *
+ * @class Main
+ */
+
+class Main {
+  constructor() {
+    this.ctxMenuId = null;
+  }
+  init = async () => {
+    this.initContextMenu();
+  };
+  /**
+   * Context menu option initialization
+   *
+   * @method
+   * @memberof Main
+   */
+  initContextMenu = () => {
+    console.log({ ctx: chrome.contextMenus });
+    if (this.ctxMenuId) return;
+    this.ctxMenuId = chromeService.createContextMenu({
+      title: "Add this image",
+      contexts: ["image"],
+      onclick: this.onContextMenuClick
+    });
+  };
+  /**
+   * Context menu click handler
+   *
+   * @method
+   * @memberof Main
+   */
+  onContextMenuClick = (info, tab) => {
+    const { srcUrl } = info;
+    chromeService.openHelpPage(encodeURIComponent(srcUrl));
+  };
+};
+
+const main = new Main();
+main.init().catch(e => {
+  console.log("Error loading extension", { e });
 });

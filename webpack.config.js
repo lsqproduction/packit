@@ -74,7 +74,7 @@ var options = {
     alias: alias,
     extensions: fileExtensions
       .map((extension) => '.' + extension)
-      .concat(['.jsx', '.js', '.css']),
+      .concat(['.jsx', '.js', '.css', '.json']),
   },
   plugins: [
     new webpack.ProgressPlugin(),

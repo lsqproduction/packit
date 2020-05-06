@@ -14,9 +14,13 @@
   },
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
+    "@material-ui/core": "^4.9.13",
     "@types/chrome": "0.0.104",
     "@types/react": "^16.9.26",
+    "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
+    "lottie-react-web": "^2.1.4",
+    "query-string": "^6.12.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
