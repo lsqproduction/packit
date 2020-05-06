@@ -10,9 +10,9 @@ export default class Card extends React.Component {
     this.state = {
       imageUrl: this.urlString,
       title: '',
-      description: '',
+      description: this.urlString,
       favorite: '',
-      collection: 'Sketch',
+      type: 'sketch',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,10 +48,36 @@ export default class Card extends React.Component {
   };
   handleChange = (evt) => {
     this.setState({
-      [evt.target.name]: evt.target.value,
+      [evt.target.name]: evt.target.value.toString().toLowerCase(),
     });
   };
-
+  async getImageAsBlob(imgUrl) {
+    let response = await fetch(imgUrl);
+    let blob = await response.blob(); // download as Blob object
+    console.log(blob);
+    return blob;
+  }
+  uploadImageViaUrlToCard = async (imgUrl, cardData) => {
+    const blob = await this.getImageAsBlob(imgUrl);
+    const saveCardUrl = 'https://angora.techpacker.io/api/favorite/save/card';
+    // create formdata as favorite/save/card need form data
+    // we generally use form data when image upload is involved
+    let fd = new FormData();
+    fd.append('card', JSON.stringify(cardData));
+    fd.append('timestamp', JSON.stringify(Date.now()));
+    fd.append('upload', blob);
+    const response = await fetch(saveCardUrl, {
+      method: 'POST',
+      body: fd,
+    });
+    if (response.ok) {
+      // if HTTP-status is 200-299
+      // get the response body (the method explained below)
+      alert('Yay! card saved! image uploaded!');
+    } else {
+      alert('Nay! card saved failed!');
+    }
+  }
   async handleSubmit(evt) {
     evt.preventDefault();
     console.log('this.state', this.state);
@@ -80,10 +106,15 @@ export default class Card extends React.Component {
         'https://angora.techpacker.io/api/favorite/createCard ',
         payload
       );
-      alert("uploaded");
-      console.log(data);
+      // now save with image url
+      // check if user provide image url
+      // and that previous request to create was successful
+      if (this.state.imageUrl && data.data) {
+        console.log('this.state.imageUrl:', this.state.imageUrl);
+        // data.data is creaded card data returned from server
+        this.uploadImageViaUrlToCard(this.state.imageUrl, data.data);
+      }
     } catch (error) {
-      console.log({error});
       alert("error");
     }
   }
@@ -139,15 +170,15 @@ export default class Card extends React.Component {
           onChange={this.handleChange}
         /> */}
         <select
-          id="collection"
-          name="collection"
-          value={this.state.collection}
+          id="type"
+          name="type"
+          value={this.state.type}
           onChange={this.handleChange}
         >
-          <option value="1">Sketch </option>
-          <option value="2">Size</option>
-          <option value="3">Material</option>
-          <option value="3">table</option>
+          <option value="sketch">Sketch </option>
+          <option value="size">Size</option>
+          <option value="material">Material</option>
+          <option value="table">table</option>
         </select>
 
         <button className="button" type="submit">
