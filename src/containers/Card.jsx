@@ -23,12 +23,13 @@ export default class Card extends React.Component {
     })
   }
   handleChange = (evt) => {
-    console.log(evt.target.name, evt.target.value);
+   const data = this.state;
     this.setState({
       [evt.target.name]: evt.target.value,
     });
-    db.set({data: this.state});
-    console.log("state", this.state);
+    data[evt.target.name] = evt.target.value;
+    db.set({data: data});
+    console.log("state", data);
   };
 
   render() {
