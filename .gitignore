@@ -19,4 +19,4 @@
 # secrets
 secrets.*.js
 
-.idea
+/.idea

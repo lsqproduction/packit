@@ -1,121 +1,64 @@
 import React from 'react';
-import axios from 'axios';
-//import fetchAddedCard
+import Db from '../services/dbService'
 
+const db = new Db();
 export default class Card extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      imageUrl: '',
-      title: '',
-      description: '',
-      favorite: '',
-      collection: 'Sketch',
+      cardTitle: '',
+      cardDescription: '',
+      cardType: 'sketch',
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  componentDidMount() {
+    db.get('data').then(Data => {
+      const {data} = Data;
+      console.log('componentDidMount', data);
+      this.setState({
+        cardTitle: data.cardTitle || '',
+        cardDescription: data.cardDescription || '',
+        cardType: data.cardType || '',
+      });
+    })
   }
   handleChange = (evt) => {
+    console.log(evt.target.name, evt.target.value);
     this.setState({
       [evt.target.name]: evt.target.value,
     });
+    db.set({data: this.state});
+    console.log("state", this.state);
   };
-
-  async handleSubmit(evt) {
-    evt.preventDefault();
-    console.log('this.state', this.state);
-    let payload = {
-      pack: { ...this.state, favorite: `${localStorage.userId}` },
-      timeStamp: Date.now(),
-    };
-
-    console.log(payload);
-    //need to make request for image to imageMagic for processing
-    //save the big file and optimize file
-    //process image in s3
-    //
-    try {
-      let data = await axios.post(
-        'https://angora.techpacker.io/api/favorite/createCard ',
-        payload
-      );
-      console.log('data', data);
-    } catch (error) {
-      console.error(error);
-    }
-
-    this.setState({
-      imageUrl: '',
-      title: '',
-      description: '',
-      favorite: '',
-    });
-  }
-
-  componentDidMount() {
-    //listen for messages from content - image url
-    //this.setState({imageUrl})
-    console.log('mounted');
-    console.log(this.state);
-
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.message === 'hi') sendResponse({ message: 'hi to you' });
-    });
-  }
 
   render() {
     return (
-      <form
-        onSubmit={(evt) => {
-          this.handleSubmit(evt);
-        }}
-      >
+      <form>
         <input
-          name="imageUrl"
-          type="text"
-          placeholder="Image Url"
-          value={this.state.imageUrl}
-          onChange={this.handleChange}
-        />
-
-        <input
-          name="title"
+          name="cardTitle"
           type="text"
           placeholder="Card Title"
-          value={this.state.title}
+          value={this.state.cardTitle}
           onChange={this.handleChange}
         />
-
         <input
-          name="description"
+          name="cardDescription"
           type="text"
           placeholder="Description"
-          value={this.state.description}
+          value={this.state.cardDescription}
           onChange={this.handleChange}
         />
-
-        {/* <input
-          name="collection"
-          type="text"
-          placeholder="Collection"
-          value={this.state.collection}
-          onChange={this.handleChange}
-        /> */}
         <select
-          id="collection"
-          name="collection"
-          value={this.state.collection}
+          id="cardType"
+          name="cardType"
+          value={this.state.cardType}
           onChange={this.handleChange}
         >
-          <option value="1">Sketch </option>
-          <option value="2">Size</option>
-          <option value="3">Material</option>
-          <option value="3">table</option>
+          <option value="sketch">Sketch </option>
+          <option value="size">Size</option>
+          <option value="material">Material</option>
+          <option value="table">table</option>
         </select>
-
-        <button className="button" type="submit">
-          Save
-        </button>
       </form>
     );
   }

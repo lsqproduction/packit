@@ -1,8 +1,9 @@
 import React from 'react';
 import axios from 'axios';
+import Db from '../../services/dbService';
 const queryString = require("query-string");
 const parsed = queryString.parse(location.search);
-
+const db = new Db();
 export default class Card extends React.Component {
   constructor() {
     super();
@@ -13,9 +14,20 @@ export default class Card extends React.Component {
       description: this.urlString,
       favorite: '',
       type: 'sketch',
+      isSaving: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  componentDidMount() {
+    db.get('data').then(Data => {
+      const {data} = Data;
+      this.setState({
+        title: data.cardTitle == '' ? this.state.type : data.cardTitle,
+        description:`${data.cardDescription} - ${this.state.imageUrl}`,
+        type: data.cardType == '' ? this.state.type : data.cardType,
+      });
+    })
   }
   getUserCookie = () => {
     return new Promise((resolve, reject) => {
@@ -48,7 +60,7 @@ export default class Card extends React.Component {
   };
   handleChange = (evt) => {
     this.setState({
-      [evt.target.name]: evt.target.value.toString().toLowerCase(),
+      [evt.target.name]: evt.target.value,
     });
   };
   async getImageAsBlob(imgUrl) {
@@ -77,26 +89,18 @@ export default class Card extends React.Component {
     } else {
       alert('Nay! card saved failed!');
     }
+    this.setState({isSaving: false});
   }
   async handleSubmit(evt) {
+    this.setState({isSaving: true});
     evt.preventDefault();
-    console.log('this.state', this.state);
-    // getUserInfo().then((userInfo) => {
-    //   let userId = userInfo.id;
-    //
-    //   let fullName = userInfo.fullName;
-    //
-    //   window.localStorage.setItem('userId', userId);
-    //
-    //   window.localStorage.setItem('fullName', fullName);
-    // });
     const userInfo = await this.getUserInfo();
+    let payloadData = this.state;
+    payloadData.title = payloadData.title == '' ? payloadData.type: payloadData.title;
     let payload = {
-      pack: { ...this.state, favorite: `${userInfo.id}` },
+      pack: { ...payloadData, favorite: `${userInfo.id}` },
       timeStamp: Date.now(),
     };
-
-    console.log(payload);
     //need to make request for image to imageMagic for processing
     //save the big file and optimize file
     //process image in s3
@@ -115,21 +119,10 @@ export default class Card extends React.Component {
         this.uploadImageViaUrlToCard(this.state.imageUrl, data.data);
       }
     } catch (error) {
+      this.setState({isSaving: false});
       alert("error");
     }
   }
-
-  componentDidMount() {
-    //listen for messages from content - image url
-    //this.setState({imageUrl})
-    console.log('mounted');
-    console.log(this.state);
-
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.message === 'hi') sendResponse({ message: 'hi to you' });
-    });
-  }
-
   render() {
     return (
       <form
@@ -149,12 +142,12 @@ export default class Card extends React.Component {
         <input
           name="title"
           type="text"
-          placeholder="Card Title"
+          placeholder={`Card Title default name is ${this.state.type}`}
           value={this.state.title}
           onChange={this.handleChange}
         />
 
-        <input
+        <textarea
           name="description"
           type="text"
           placeholder="Description"
@@ -162,13 +155,6 @@ export default class Card extends React.Component {
           onChange={this.handleChange}
         />
 
-        {/* <input
-          name="collection"
-          type="text"
-          placeholder="Collection"
-          value={this.state.collection}
-          onChange={this.handleChange}
-        /> */}
         <select
           id="type"
           name="type"
@@ -181,8 +167,8 @@ export default class Card extends React.Component {
           <option value="table">table</option>
         </select>
 
-        <button className="button" type="submit">
-          Save
+        <button className="button" type="submit" disabled={this.state.isSaving}>
+          {this.state.isSaving==true? 'Saving...': 'Save'}
         </button>
       </form>
     );

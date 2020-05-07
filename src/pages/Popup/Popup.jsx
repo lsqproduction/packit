@@ -11,9 +11,9 @@ const Popup = () => {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>Welcome to Techpacker!</p>
-        <Greetings />
+        {/*<Greetings />*/}
+        <p>Set default values here</p>
         <Card />
-
         {/* <Login /> */}
         {/* <button className="button">SIGN IN</button>
         <button className="button_signup">SIGN UP</button> */}

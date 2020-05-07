@@ -3,6 +3,10 @@ import '../../assets/img/logo48.png';
 import '../../assets/img/logo128.png';
 
 import chromeService from "../../services/chromeService";
+import Db,{ Schema } from '../../services/dbService';
+
+const db = new Db();
+const schema = new Schema();
 /**
  * Main extension functionality
  *
@@ -14,7 +18,22 @@ class Main {
     this.ctxMenuId = null;
   }
   init = async () => {
+    await this.initDb();
     this.initContextMenu();
+  };
+  /**
+   *Database intialization
+   * @method
+   * @memberOf Main
+   */
+  initDb = async () => {
+    const res = await db.get("loadedFirstTime");
+    if (!res.hasOwnProperty("loadedFirstTime")) {
+      await db.set({
+        loadedFirstTime: true,
+        ...schema.data
+      });
+    }
   };
   /**
    * Context menu option initialization
