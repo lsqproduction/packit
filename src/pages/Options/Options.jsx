@@ -32,7 +32,7 @@ export default class Card extends React.Component {
   getUserCookie = () => {
     return new Promise((resolve, reject) => {
       const cookieDetails = {
-        url: 'https://angora.techpacker.io',
+        url: 'https://angora.techpacker.com',
         name: 'user',
       };
       chrome.cookies.get(cookieDetails, (cookie) => {
@@ -71,7 +71,7 @@ export default class Card extends React.Component {
   }
   uploadImageAndTagsViaUrlToCard = async (imgUrl, cardData) => {
     const blob = await this.getImageAsBlob(imgUrl);
-    const saveCardUrl = 'https://angora.techpacker.io/api/favorite/save/card';
+    const saveCardUrl = 'https://angora.techpacker.com/api/favorite/save/card';
     // create formdata as favorite/save/card need form data
     // we generally use form data when image upload is involved
     let fd = new FormData();
@@ -105,7 +105,7 @@ export default class Card extends React.Component {
     };
     try {
       let data = await axios.post(
-        'https://angora.techpacker.io/api/favorite/createCard ',
+        'https://angora.techpacker.com/api/favorite/createCard ',
         payload
       );
       if (this.state.imageUrl && data.data) {
