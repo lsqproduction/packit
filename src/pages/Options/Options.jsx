@@ -12,12 +12,11 @@ export default class Card extends React.Component {
       imageUrl: this.urlString,
       title: '',
       description: this.urlString,
+      tags: "",
       favorite: '',
       type: 'sketch',
       isSaving: false,
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
     db.get('data').then(Data => {
@@ -26,6 +25,7 @@ export default class Card extends React.Component {
         title: data.cardTitle == '' ? this.state.type : data.cardTitle,
         description:`${data.cardDescription} - ${this.state.imageUrl}`,
         type: data.cardType == '' ? this.state.type : data.cardType,
+        tags: data.cardTags || '',
       });
     })
   }
@@ -69,7 +69,7 @@ export default class Card extends React.Component {
     console.log(blob);
     return blob;
   }
-  uploadImageViaUrlToCard = async (imgUrl, cardData) => {
+  uploadImageAndTagsViaUrlToCard = async (imgUrl, cardData) => {
     const blob = await this.getImageAsBlob(imgUrl);
     const saveCardUrl = 'https://angora.techpacker.io/api/favorite/save/card';
     // create formdata as favorite/save/card need form data
@@ -91,32 +91,26 @@ export default class Card extends React.Component {
     }
     this.setState({isSaving: false});
   }
-  async handleSubmit(evt) {
+  handleSubmit = async evt => {
     this.setState({isSaving: true});
     evt.preventDefault();
     const userInfo = await this.getUserInfo();
     let payloadData = this.state;
+    let tags = payloadData.tags.split(',');
+    payloadData.tags = tags;
     payloadData.title = payloadData.title == '' ? payloadData.type: payloadData.title;
     let payload = {
       pack: { ...payloadData, favorite: `${userInfo.id}` },
       timeStamp: Date.now(),
     };
-    //need to make request for image to imageMagic for processing
-    //save the big file and optimize file
-    //process image in s3
-    //
     try {
       let data = await axios.post(
         'https://angora.techpacker.io/api/favorite/createCard ',
         payload
       );
-      // now save with image url
-      // check if user provide image url
-      // and that previous request to create was successful
       if (this.state.imageUrl && data.data) {
-        console.log('this.state.imageUrl:', this.state.imageUrl);
         // data.data is creaded card data returned from server
-        this.uploadImageViaUrlToCard(this.state.imageUrl, data.data);
+        this.uploadImageAndTagsViaUrlToCard(this.state.imageUrl, data.data);
       }
     } catch (error) {
       this.setState({isSaving: false});
@@ -155,6 +149,13 @@ export default class Card extends React.Component {
           onChange={this.handleChange}
         />
 
+        <input
+          name="tags"
+          type="text"
+          placeholder={`tags (separated by ,)`}
+          value={this.state.tags}
+          onChange={this.handleChange}
+        />
         <select
           id="type"
           name="type"

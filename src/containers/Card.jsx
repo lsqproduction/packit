@@ -9,16 +9,17 @@ export default class Card extends React.Component {
       cardTitle: '',
       cardDescription: '',
       cardType: 'sketch',
+      cardTags: '',
     };
   }
   componentDidMount() {
     db.get('data').then(Data => {
       const {data} = Data;
-      console.log('componentDidMount', data);
       this.setState({
         cardTitle: data.cardTitle || '',
         cardDescription: data.cardDescription || '',
         cardType: data.cardType || '',
+        cardTags: data.cardTags || '',
       });
     })
   }
@@ -29,7 +30,6 @@ export default class Card extends React.Component {
     });
     data[evt.target.name] = evt.target.value;
     db.set({data: data});
-    console.log("state", data);
   };
 
   render() {
@@ -47,6 +47,13 @@ export default class Card extends React.Component {
           type="text"
           placeholder="Description"
           value={this.state.cardDescription}
+          onChange={this.handleChange}
+        />
+        <input
+          name="cardTags"
+          type="text"
+          placeholder={`tags (separated by ,)`}
+          value={this.state.cardTags}
           onChange={this.handleChange}
         />
         <select

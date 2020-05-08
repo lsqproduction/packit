@@ -10,6 +10,7 @@ export class Schema {
       cardTitle: '',
       cardDescription: '',
       cardType: 'sketch',
+      cardTags: "",
     };
   }
 }
